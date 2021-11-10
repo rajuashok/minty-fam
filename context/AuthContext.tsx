@@ -23,8 +23,8 @@ export const AuthProvider: React.FC<{}> = (props) => {
       // Grab auth token from loginWithMagicLink
       const didToken = await magic.auth.loginWithMagicLink({
         email,
-        showUI: false,
-        redirectURI: new URL('/', window.location.origin).href,
+        showUI: true,
+        redirectURI: new URL('/callback', window.location.origin).href,
       });
 
       // Validate auth token with server
@@ -34,6 +34,7 @@ export const AuthProvider: React.FC<{}> = (props) => {
           Authorization: 'Bearer ' + didToken,
         },
       });
+
       if (res.status === 200) {
         setUser({ email });
         router.push('/');
@@ -55,12 +56,34 @@ export const AuthProvider: React.FC<{}> = (props) => {
 
   const checkUserLoggedIn = async () => {
     try {
-      const isLoggedIn = await magic.user.isLoggedIn();
-      if (isLoggedIn) {
+      if (router.pathname == '/callback') {
+        const didToken = await magic.auth.loginWithCredential();
+
+        // Validate auth token with server
+        const res = await fetch('/api/login', {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: 'Bearer ' + didToken,
+            },
+        });
+
         const { email } = await magic.user.getMetadata();
-        setUser({ email });
+        if (res.status === 200 && !!email) {
+          setUser({ email });
+          router.push('/');
+        }
       } else {
-        router.push('/login');
+        const isLoggedIn = await magic.user.isLoggedIn();
+        if (isLoggedIn) {
+          const { email } = await magic.user.getMetadata();
+
+          setUser({ email });
+          if (router.pathname != '/') {
+            router.push('/');
+          }
+        } else {
+          router.push('/login');
+        }
       }
     } catch (e) {
     }
