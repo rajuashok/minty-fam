@@ -24,7 +24,7 @@ export const AuthProvider: React.FC<{}> = (props) => {
       const didToken = await magic.auth.loginWithMagicLink({
         email,
         showUI: false,
-        redirectURI: new URL('/callback', window.location.origin).href,
+        redirectURI: new URL('/', window.location.origin).href,
       });
 
       // Validate auth token with server
