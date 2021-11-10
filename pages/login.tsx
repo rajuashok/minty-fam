@@ -23,7 +23,7 @@ export default function Login() {
       if (e instanceof InvalidEmailError) {
         setAuthFailed("That email is not associated with a minty mofo.");
       } else if (e instanceof AuthFailedError) {
-        setAuthFailed("Something went wrong. Please try again.");
+        // ignore for now.
       }
     }
 
