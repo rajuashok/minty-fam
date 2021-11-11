@@ -1,9 +1,14 @@
-import { useEffect } from 'react';
-import Router from 'next/router';
-import { magic } from '../magic';
 import { Spinner } from '@chakra-ui/spinner';
+import Layout from '../components/Layout';
+import Content from '../components/Content';
 
 export default function Callback() {
 
-  return <Spinner />;
+  return (
+    <Layout>
+      <Content>
+        <Spinner />
+      </Content>
+    </Layout>
+  );
 }

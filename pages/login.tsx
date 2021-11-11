@@ -2,6 +2,8 @@ import { useCallback, useContext, useState } from 'react';
 import { Flex, Heading, Input, Button, Spinner } from '@chakra-ui/react';
 import { Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton } from '@chakra-ui/react';
 import AuthContext, { AuthFailedError, InvalidEmailError } from '../context/AuthContext';
+import Layout from '../components/Layout';
+import Content from '../components/Content';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -37,8 +39,8 @@ export default function Login() {
   }, []);
 
   return (
-    <Flex height="100vh" alignItems="center" justifyContent="center">
-      <Flex width={600} bgColor="gray.200" direction="column" alignItems="start" padding={20} rounded={10}>
+    <Layout>
+      <Content>
         <Heading mb={12}>Please sign up or login</Heading>
         <Input
           variant="filled"
@@ -63,7 +65,7 @@ export default function Login() {
               : <>Send</>}
           </Button>
         </Flex>
-      </Flex>
-    </Flex>
+      </Content>
+    </Layout>
   );
 }

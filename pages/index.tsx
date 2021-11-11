@@ -3,6 +3,8 @@ import Router from 'next/router';
 import { Flex, Heading, Button, Spinner } from '@chakra-ui/react';
 import AuthContext from '../context/AuthContext';
 import { magic } from '../magic';
+import Layout from '../components/Layout';
+import Content from '../components/Content';
 
 export default function Index() {
   const { user, logoutUser } = useContext(AuthContext);
@@ -24,15 +26,23 @@ export default function Index() {
     }
   }, [Router]);
 
-  return user ? (
-    <Flex height="100vh" alignItems="center" justifyContent="center">
-      <Flex bgColor="gray.200" direction="column" alignItems="end" background="light.background" padding={20} rounded={10}>
-        <Heading mb={10}>Logged in user: {user.email}</Heading>
-        <Button colorScheme="green" p={22} w={100} mb={3} onClick={logout}>Logout</Button>
-        <Button colorScheme="green" p={22} onClick={getAddress}>What's my Address?</Button>
-      </Flex>
-    </Flex>
-  ) : (
-    <Spinner />
+  return (
+    <Layout>
+      <Content>
+      {user
+        ?
+          <>
+            <Heading mb={10}>Logged in user: {user.email}</Heading>
+            <Flex width="100%" justifyContent="end">
+              <Flex direction="column" alignItems="end">
+                <Button colorScheme="green" p={22} w={100} mb={3} onClick={logout}>Logout</Button>
+                <Button colorScheme="green" p={22} onClick={getAddress}>What's my Address?</Button>
+              </Flex>
+            </Flex>
+          </>
+        : <Spinner/>
+      }
+      </Content>
+    </Layout>
   );
 }
