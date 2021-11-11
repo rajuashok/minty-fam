@@ -22,6 +22,7 @@ export default function Index() {
             <Flex width="100%" justifyContent="end">
               <Flex direction="column" alignItems="end">
                 <Button colorScheme="green" p={22} w={100} mb={3} onClick={logout}>Logout</Button>
+                <Button colorScheme="green" p={22} w={100} mb={3} onClick={() => {Router.push('/register')}}>Register</Button>
               </Flex>
             </Flex>
           </>

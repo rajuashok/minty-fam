@@ -26,11 +26,11 @@ export const AuthProvider: React.FC<{}> = (props) => {
    *
    * @param token Auth token
    */
-  const fetchUser = async (token: string) => {
+  const fetchUser = async (token: string, redirect?: boolean) => {
     const res = await get('/api/user', true, token);
     if (res.status == 200) {
       setUser(await res.json());
-      if (router.pathname != '/') {
+      if (redirect) {
         router.push('/');
       }
     } else {
@@ -58,7 +58,7 @@ export const AuthProvider: React.FC<{}> = (props) => {
       });
 
       // 2. FETCH AUTHed user
-      await fetchUser(token);
+      await fetchUser(token, true);
     } catch {
       setUser(null);
       throw new AuthFailedError();
@@ -88,20 +88,20 @@ export const AuthProvider: React.FC<{}> = (props) => {
         // 1. AUTH TOKEN w/ credentials in URL
         const token = await magic.auth.loginWithCredential();
         // 2. FETCH AUTHed user
-        await fetchUser(token);
+        await fetchUser(token, true);
       } else {
-        // 1. VALID SESSION?
-        const isLoggedIn = await magic.user.isLoggedIn();
-        if (isLoggedIn) {
-          // 1. AUTH TOKEN
-          const token = await magic.user.getIdToken();
+        // const isLoggedIn = await magic.user.isLoggedIn();
+        // 1. AUTH TOKEN
+        const token = await magic.user.getIdToken();
+        if (!!token) {
           // 2. FETCH AUTHed user
-          await fetchUser(token);
+          await fetchUser(token, router.pathname == '/login');
         } else {
           router.push('/login');
         }
       }
     } catch (e) {
+      console.log(`User not logged in, error: ${e}`);
       router.push('/login');
     }
   }
