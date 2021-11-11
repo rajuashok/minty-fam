@@ -2,6 +2,7 @@ import React, { createContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { isWhitelisted } from '../lib/whitelisted';
 import { magic } from '../magic';
+import { get } from '../lib/api';
 
 const AuthContext = createContext({
   user: null,
@@ -28,12 +29,7 @@ export const AuthProvider: React.FC<{}> = (props) => {
       });
 
       // Validate auth token with server
-      const res = await fetch('/api/login', {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + didToken,
-        },
-      });
+      const res = await get('/api/login', true, didToken);
 
       if (res.status === 200) {
         setUser({ email });
@@ -59,13 +55,7 @@ export const AuthProvider: React.FC<{}> = (props) => {
       if (router.pathname == '/callback') {
         const didToken = await magic.auth.loginWithCredential();
 
-        // Validate auth token with server
-        const res = await fetch('/api/login', {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: 'Bearer ' + didToken,
-            },
-        });
+        const res = await get('/api/login', true, didToken);
 
         const { email } = await magic.user.getMetadata();
         if (res.status === 200 && !!email) {

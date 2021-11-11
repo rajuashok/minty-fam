@@ -1,6 +1,6 @@
 import { useCallback, useContext, useState } from 'react';
 import { Flex, Heading, Input, Button, Spinner } from '@chakra-ui/react';
-import { Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton } from '@chakra-ui/react';
+import { Alert, AlertIcon, AlertDescription, CloseButton } from '@chakra-ui/react';
 import AuthContext, { AuthFailedError, InvalidEmailError } from '../context/AuthContext';
 import Layout from '../components/Layout';
 import Content from '../components/Content';
