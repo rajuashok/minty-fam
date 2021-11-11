@@ -17,7 +17,7 @@ export default async function login(req, res) {
     const meta = await magic.users.getMetadataByToken(didToken);
     res.status(200).json({
       email: meta.email,
-      meta: meta.email in userMetadata ? userMetadata[meta.email] : null
+      ...(meta.email in userMetadata ? userMetadata[meta.email] : null)
     });
   } catch (error) {
     res.status(500).json({ error: error.message });

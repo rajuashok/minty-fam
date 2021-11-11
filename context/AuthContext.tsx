@@ -3,44 +3,71 @@ import { useRouter } from 'next/router';
 import { isWhitelisted } from '../lib/whitelisted';
 import { magic } from '../magic';
 import { get } from '../lib/api';
+import { UserType } from '../types/user';
 
-const AuthContext = createContext({
+interface AuthContextType {
+  user: UserType;
+  loginUser: (email: string) => Promise<void>
+  logoutUser: () => Promise<void>
+}
+
+const AuthContext = createContext<AuthContextType>({
   user: null,
   loginUser: null,
   logoutUser: null,
 });
 
 export const AuthProvider: React.FC<{}> = (props) => {
-  const [user, setUser] = useState(null);
-
+  const [user, setUser] = useState<UserType>(null);
   const router = useRouter();
 
+  /**
+   * Fetch valid user data with given auth token.
+   *
+   * @param token Auth token
+   */
+  const fetchUser = async (token: string) => {
+    const res = await get('/api/user', true, token);
+    if (res.status == 200) {
+      setUser(await res.json());
+      if (router.pathname != '/') {
+        router.push('/');
+      }
+    } else {
+      throw new AuthFailedError('Failed to login to /api/user');
+    }
+  }
+
+  /**
+   * Login user with given email. This succeeds if we're able to
+   * both create an auth token AND fetch user data.
+   *
+   * @param email Email address to auth with.
+   */
   const loginUser = async (email) => {
     if (!isWhitelisted(email)) {
       throw new InvalidEmailError();
     }
 
     try {
-      // Grab auth token from loginWithMagicLink
-      const didToken = await magic.auth.loginWithMagicLink({
+      // 1. AUTH TOKEN w/ submitted email
+      const token = await magic.auth.loginWithMagicLink({
         email,
         showUI: true,
         redirectURI: new URL('/callback', window.location.origin).href,
       });
 
-      // Validate auth token with server
-      const res = await get('/api/login', true, didToken);
-
-      if (res.status === 200) {
-        setUser({ email });
-        router.push('/');
-      }
+      // 2. FETCH AUTHed user
+      await fetchUser(token);
     } catch {
       setUser(null);
       throw new AuthFailedError();
     }
   };
 
+  /**
+   * Invalidate existing user session and clear existing user data.
+   */
   const logoutUser = async () => {
     try {
       await magic.user.logout();
@@ -50,32 +77,32 @@ export const AuthProvider: React.FC<{}> = (props) => {
     }
   };
 
+  /**
+   * Check for a valid user session (either using credentials in URL
+   * or session in cookies). If we have a valid session use the token
+   * to fetch and store user data.
+   */
   const checkUserLoggedIn = async () => {
     try {
       if (router.pathname == '/callback') {
-        const didToken = await magic.auth.loginWithCredential();
-
-        const res = await get('/api/login', true, didToken);
-
-        const { email } = await magic.user.getMetadata();
-        if (res.status === 200 && !!email) {
-          setUser({ email });
-          router.push('/');
-        }
+        // 1. AUTH TOKEN w/ credentials in URL
+        const token = await magic.auth.loginWithCredential();
+        // 2. FETCH AUTHed user
+        await fetchUser(token);
       } else {
+        // 1. VALID SESSION?
         const isLoggedIn = await magic.user.isLoggedIn();
         if (isLoggedIn) {
-          const { email } = await magic.user.getMetadata();
-
-          setUser({ email });
-          if (router.pathname != '/') {
-            router.push('/');
-          }
+          // 1. AUTH TOKEN
+          const token = await magic.user.getIdToken();
+          // 2. FETCH AUTHed user
+          await fetchUser(token);
         } else {
           router.push('/login');
         }
       }
     } catch (e) {
+      router.push('/login');
     }
   }
 
