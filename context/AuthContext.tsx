@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { isWhitelisted } from '../lib/whitelisted';
 import { magic } from '../magic';
 import { get } from '../lib/api';
-import { UserType } from '../types/user';
+import { UserType } from '../common/types/user';
 
 interface AuthContextType {
   user: UserType;
@@ -29,7 +29,7 @@ export const AuthProvider: React.FC<{}> = (props) => {
   const fetchUser = async (token: string, redirect?: boolean) => {
     const res = await get('/api/user', true, token);
     if (res.status == 200) {
-      setUser(await res.json());
+      setUser((await res.json()).user);
       if (redirect) {
         router.push('/');
       }
