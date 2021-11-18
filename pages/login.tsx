@@ -41,7 +41,7 @@ export default function Login() {
   return (
     <Layout>
       <Content>
-        <Heading mb={12}>Please sign up or login</Heading>
+        <Heading mb={12}>Please login</Heading>
         <Input
           variant="filled"
           bgColor="gray.50"
@@ -62,7 +62,7 @@ export default function Login() {
           <Button colorScheme="green" onClick={login} disabled={isLoggingIn}>
             {isLoggingIn
               ? <Spinner />
-              : <>Send</>}
+              : <>Login</>}
           </Button>
         </Flex>
       </Content>

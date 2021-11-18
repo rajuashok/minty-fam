@@ -7,12 +7,14 @@ import { UserType } from '../common/types/user';
 
 interface AuthContextType {
   user: UserType;
+  setUser: (user: UserType) => void
   loginUser: (email: string) => Promise<void>
   logoutUser: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
+  setUser: null,
   loginUser: null,
   logoutUser: null,
 });
@@ -111,7 +113,7 @@ export const AuthProvider: React.FC<{}> = (props) => {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, loginUser, logoutUser }}>
+    <AuthContext.Provider value={{ user, setUser, loginUser, logoutUser }}>
       {props.children}
     </AuthContext.Provider>
   )
