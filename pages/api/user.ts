@@ -30,18 +30,15 @@ export default async function user(req, res) {
           }
         });
       } catch (error) {
+        console.log("Failed to GET user, error: ", error);
         return res.status(500).json({ error: error.message });
       }
     }
     case 'POST': {
-      console.log("POST user update", req.body);
-      console.log("POST user update", req.body);
       try {
         const newUser = req.body;
-        console.log(newUser);
         const user = jsonDB.updateUser(email, newUser);
 
-        console.log("Updated user: ", user);
         return res.status(200).json({
           user: {
             email,
@@ -49,7 +46,7 @@ export default async function user(req, res) {
           }
         });
       } catch (error) {
-        console.log(error);
+        console.log("Failed to POST user, error: ", error);
         return res.status(500).json({ error: error.message });
       }
     }
