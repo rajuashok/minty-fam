@@ -37,3 +37,6 @@ jspm_packages
 .node_repl_history
 .next
 .env.local
+
+# temp local JSON DB
+jsondb_*
