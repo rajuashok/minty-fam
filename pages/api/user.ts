@@ -4,6 +4,7 @@ import db from './lib/db';
 const magic = new Magic(process.env.MAGIC_SECRET_KEY);
 
 export default async function user(req, res) {
+  console.log(`Running a ${req.method} request on /api/user...`);
   let email = ""
   try {
     const didToken = req.headers.authorization.substr(7);
@@ -11,10 +12,12 @@ export default async function user(req, res) {
     const meta = await magic.users.getMetadataByToken(didToken);
     email = meta.email;
   } catch (e) {
+    console.log(`Failed to authenticate token with Magic, e: `, e);
     return res.status(500).json({ error: e.message })
   }
 
   if (!email) {
+    console.log(`Failed to capture email from auth token as email is null`);
     return res.status(500).json({ error: 'Unauthenticated request for a user.' })
   }
 
