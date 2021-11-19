@@ -40,4 +40,4 @@ class JsonDatabase implements DB {
   }
 }
 
-export default new JsonDatabase();
+export default JsonDatabase;

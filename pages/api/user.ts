@@ -1,5 +1,5 @@
 import { Magic } from '@magic-sdk/admin';
-import jsonDB from './lib/db/json';
+import db from './lib/db';
 
 const magic = new Magic(process.env.MAGIC_SECRET_KEY);
 
@@ -21,7 +21,7 @@ export default async function user(req, res) {
   switch (req.method) {
     case 'GET': {
       try {
-        const user = jsonDB.readUser(email);
+        const user = db.readUser(email);
     
         return res.status(200).json({
           user: {
@@ -37,7 +37,7 @@ export default async function user(req, res) {
     case 'POST': {
       try {
         const newUser = req.body;
-        const user = jsonDB.updateUser(email, newUser);
+        const user = db.updateUser(email, newUser);
 
         return res.status(200).json({
           user: {
