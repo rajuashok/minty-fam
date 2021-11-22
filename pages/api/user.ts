@@ -24,8 +24,8 @@ export default async function user(req, res) {
   switch (req.method) {
     case 'GET': {
       try {
-        const user = db.readUser(email);
-    
+        const user = await db.readUser(email);
+
         return res.status(200).json({
           user: {
             email,
@@ -40,7 +40,7 @@ export default async function user(req, res) {
     case 'POST': {
       try {
         const newUser = req.body;
-        const user = db.updateUser(email, newUser);
+        const user = await db.updateUser(email, newUser);
 
         return res.status(200).json({
           user: {

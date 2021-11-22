@@ -26,11 +26,11 @@ class JsonDatabase implements DB {
     });
   }
 
-  readUser(email: string): UserType {
+  async readUser(email: string): Promise<UserType> {
     return this.db.getObject<UserType>(`/users/${email}`);
   }
 
-  updateUser(email: string, user: UserType): UserType {
+  async updateUser(email: string, user: UserType): Promise<UserType> {
     if (user.email != email) {
       throw new Error(`Can't change email. ${email} != ${user.email}`);
     }

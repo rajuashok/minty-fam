@@ -16,6 +16,7 @@ NOTE: This DB will get wiped and reset on every re-run of the app.
 If you want your local data to actually persist and feel more like a production environment you should setup your local Mongo DB server.
 1. Install mongoDB
 2. Create db `minty-fam`.
+  Run `use minty-fam`.
 3. Create collections:
 ```
 db.createCollection(

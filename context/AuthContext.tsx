@@ -31,7 +31,8 @@ export const AuthProvider: React.FC<{}> = (props) => {
   const fetchUser = async (token: string, redirect?: boolean) => {
     const res = await get('/api/user', true, token);
     if (res.status == 200) {
-      setUser((await res.json()).user);
+      const json = await res.json();
+      setUser(json.user);
       if (redirect) {
         router.push('/');
       }

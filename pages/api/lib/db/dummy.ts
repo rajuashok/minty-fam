@@ -18,11 +18,11 @@ class DummyDatabase implements DB {
   constructor() {
   }
 
-  readUser(email: string): UserType {
+  async readUser(email: string): Promise<UserType> {
     return users[email] || {email, firstYear: 1, name: 'Bot'};
   }
 
-  updateUser(email: string, user: UserType): UserType {
+  async updateUser(email: string, user: UserType): Promise<UserType> {
     return user;
   }
 }

@@ -1,17 +1,17 @@
 import { UserType } from "../../../../common/types/user";
-import DummyDatabase from "./dummy";
 import JsonDatabase from "./json";
+import MongoDB from "./mongo";
 
 export interface DB {
-  readUser(email: string): UserType;
-  updateUser(email: string, user: UserType): UserType;
+  readUser(email: string): Promise<UserType>;
+  updateUser(email: string, user: UserType): Promise<UserType>;
 }
 
 let db: DB;
-if (process.env.NODE_ENV == 'development') {
+if (process.env.NODE_ENV == 'development' && !process.env.USE_MONGODB) {
   db = new JsonDatabase();
-} else if (process.env.NODE_ENV == 'production') {
-  db = new DummyDatabase(); // TODO: replace with MongoDB
+} else {
+  db = new MongoDB(); // TODO: replace with MongoDB
 }
 
 export default db;

@@ -1,6 +1,6 @@
 
 export interface UserType {
   email: string;
-  name: string;
-  firstYear: number;
+  name?: string;
+  firstYear?: number;
 }
