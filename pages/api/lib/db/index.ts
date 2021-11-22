@@ -8,10 +8,10 @@ export interface DB {
 }
 
 let db: DB;
-if (process.env.NODE_ENV == 'development' && !process.env.USE_MONGODB) {
+if (process.env.NODE_ENV == 'development' && process.env.DEV_USE_MONGODB == "false") {
   db = new JsonDatabase();
 } else {
-  db = new MongoDB(); // TODO: replace with MongoDB
+  db = new MongoDB();
 }
 
 export default db;
