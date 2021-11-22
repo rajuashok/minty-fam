@@ -2,6 +2,7 @@ import { DB } from "..";
 import { UserType } from "../../../../../common/types/user";
 import { connectToDatabase } from "./core";
 
+const TABLE_NAME = 'user';
 
 class MongoDB implements DB {
   async readUser(email: string): Promise<UserType> {
@@ -9,7 +10,7 @@ class MongoDB implements DB {
       let { db } = await connectToDatabase();
 
       let users = await db
-        .collection("user")
+        .collection(TABLE_NAME)
         .find({ email })
         .toArray();
       if (users.length == 0) {
@@ -42,6 +43,9 @@ class MongoDB implements DB {
             $set: {
               ...user
             }
+          },
+          {
+            upsert: true
           }
         );
 
