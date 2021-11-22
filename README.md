@@ -20,7 +20,7 @@ If you want your local data to actually persist and feel more like a production 
 3. Create collections:
 ```
 db.createCollection(
-  "users",
+  "user",
   {
     validator: {
       $jsonSchema: {
