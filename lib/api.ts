@@ -33,7 +33,10 @@ export async function post(path: string, body: any, auth?: boolean, token?: stri
         headers: await createAuthHeaders(token)
       })
     } else {
-      return await fetch(path);
+      return await fetch(path, {
+        method: 'POST',
+        body: JSON.stringify(body)
+      });
     }
   } catch (e) {
     throw new Error(`Failed to make ${auth ? "authed" : ""} fetch (${path}), error: ${e}`);

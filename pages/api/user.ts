@@ -1,25 +1,10 @@
-import { Magic } from '@magic-sdk/admin';
+import { NextApiRequest, NextApiResponse } from 'next';
 import db from './lib/db';
+import withAuthenticatedEmail from './lib/middleware/auth';
 
-const magic = new Magic(process.env.MAGIC_SECRET_KEY);
-
-export default async function user(req, res) {
+const user = async (req: NextApiRequest, res: NextApiResponse) => {
   console.log(`Running a ${req.method} request on /api/user...`);
-  let email = ""
-  try {
-    const didToken = req.headers.authorization.substr(7);
-    await magic.token.validate(didToken);
-    const meta = await magic.users.getMetadataByToken(didToken);
-    email = meta.email;
-  } catch (e) {
-    console.log(`Failed to authenticate token with Magic, e: `, e);
-    return res.status(500).json({ error: e.message })
-  }
-
-  if (!email) {
-    console.log(`Failed to capture email from auth token as email is null`);
-    return res.status(500).json({ error: 'Unauthenticated request for a user.' })
-  }
+  let email = req.body.auth.email; // Authentication middleware will store email here.
 
   switch (req.method) {
     case 'GET': {
@@ -54,4 +39,8 @@ export default async function user(req, res) {
       }
     }
   }
+
+  return res.status(404);
 }
+
+export default withAuthenticatedEmail(user);

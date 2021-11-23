@@ -38,3 +38,17 @@ db.createCollection(
   }
 )
 ```
+4. Create a Unique Index on the email field of user collection.
+```
+db.user.createIndex( { "email": 1 }, { unique: true } )
+```
+
+5. Insert dummy data [WIP]
+```
+...
+```
+
+6. Check performance of a query and ensure the index is used.
+```
+db.user.find({ email: "email@email.com" }).explain("executionStats")
+```
