@@ -2,5 +2,7 @@
 export interface UserType {
   email: string;
   name?: string;
-  firstYear?: number;
+  playaName?: string;
+  phone?: string;
+  hasTicket?: boolean;
 }

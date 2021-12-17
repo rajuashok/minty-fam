@@ -1,5 +1,5 @@
-import React, { useCallback, useContext, useState } from 'react';
-import { Flex, Heading, Button, Spinner, Input, FormLabel, FormControl, RadioGroup, HStack, Radio, FormHelperText } from '@chakra-ui/react';
+import React, { useCallback, useContext } from 'react';
+import { Flex, Heading, Button, Spinner, Input, FormLabel, FormControl } from '@chakra-ui/react';
 import AuthContext from '../context/AuthContext';
 import Layout from '../components/Layout';
 import Content from '../components/Content';
@@ -8,38 +8,29 @@ import { Field, Form, Formik } from 'formik';
 
 export default function Index() {
   const { user, setUser } = useContext(AuthContext);
-  const [name, setName] = useState<string>(null);
-  const [isRegistering, setIsRegistering] = useState<boolean>(false);
 
-  const handleInputOnChange = useCallback((event) => {
-    setName(event.target.value);
-  }, [])
-
-  const register = useCallback(async () => {
-    if (!name) {
-      console.log("Must provide name");
+  const register = useCallback(async (values) => {
+    if (!values) {
+      console.log("Must provide values");
       return;
     }
-    setIsRegistering(true);
     
     try {
       const newUser = {
         ...user,
-        name
-      }
+        ...values
+      };
       const res = await post('/api/user', newUser, true)
       if (res.status == 200) {
         const updatedUser = (await res.json()).user;
         setUser(updatedUser);
-        setIsRegistering(false);
       } else {
         throw new Error(`Got a ${res.status} code when trying to update user.`);
       }
     } catch (e) {
-      setIsRegistering(false);
       console.log('Failed to register: ', e);
     }
-  }, [name])
+  }, []);
 
   return (
     <Layout>
@@ -50,20 +41,22 @@ export default function Index() {
             <Heading mb={10}>Registration for {user.email}</Heading>
             <Flex width="100%">
               <Formik
-                initialValues={{}}
-                onSubmit={(values, actions) => {
-                  setTimeout(() => {
-                    alert(JSON.stringify(values, null, 2))
-                    actions.setSubmitting(false)
-                  }, 1000)
+                initialValues={{
+                  name: user.name,
+                  playaName: user.playaName,
+                  phone: user.phone,
+                  hasTicket: user.hasTicket ? "Yes" : "No",
+                }}
+                onSubmit={async (values, actions) => {
+                  await register(values);
+                  actions.setSubmitting(false);
                 }}
               >
                 {(props) => (
                   <Form style={{width: "100%"}}>
-                    {/* <Heading mb={6} as="h3" size="md" color="gray.500">Default world details</Heading> */}
                     <Flex width="100%" flexDirection="row" mb={6}>
                       {/* Default world details (name and phone #) */}
-                      <Field name='default_name'>
+                      <Field name='name'>
                         {({ field, form }) => (
                           <FormControl mr={12} id={field.name} isInvalid={form.errors.name && form.touched.name} isRequired>
                             <FormLabel htmlFor={field.name}>Legal name</FormLabel>
@@ -92,8 +85,7 @@ export default function Index() {
                         )}
                       </Field>
                     </Flex>
-                    {/* <Heading as="h3" size="md" color="gray.500" mt={16} mb={6}>Going back, back to the playa, playa!</Heading> */}
-                    <Field name='playa_name'>
+                    <Field name='playaName'>
                       {({ field, form }) => (
                         <FormControl id={field.name} isInvalid={form.errors.name && form.touched.name} mb={6}>
                           <FormLabel htmlFor={field.name}>Playa name</FormLabel>
@@ -108,7 +100,7 @@ export default function Index() {
                       )}
                     </Field>
                     <Flex width="100%" mb={12} flexDirection="column">
-                      <Field name='arrive_date'>
+                      <Field name='arriveDate'>
                         {({ field, form }) => (
                           <FormControl mb={6} id={field.name} isInvalid={form.errors.name && form.touched.name} isRequired>
                             <FormLabel htmlFor={field.name}>Arrive Date</FormLabel>
@@ -122,7 +114,7 @@ export default function Index() {
                           </FormControl>
                         )}
                       </Field>
-                      <Field name='leave_date'>
+                      <Field name='leaveDate'>
                         {({ field, form }) => (
                           <FormControl mr={12} id={field.name} isInvalid={form.errors.name && form.touched.name} isRequired>
                             <FormLabel htmlFor={field.name}>Leave Date</FormLabel>
@@ -137,22 +129,21 @@ export default function Index() {
                         )}
                       </Field>
                     </Flex>
-                    <Field name="has_ticket">
-                      {({ field, form }) => (
-                        <FormControl id={field.name} as='fieldset' mb={6} isRequired>
-                          <Flex flexDirection="row" justifyContent="space-between">
-                            <FormLabel mr={12} as='legend'>Do you have a ticket to the burn?</FormLabel>
-                            <RadioGroup defaultValue='No'>
-                              <HStack spacing='24px'>
-                                <Radio bgColor="gray.300" value='Yes'>Yes</Radio>
-                                <Radio bgColor="gray.300" value='No'>No</Radio>
-                              </HStack>
-                            </RadioGroup>
-                          </Flex>
-                          {/* <FormHelperText>Select only if you're a fan.</FormHelperText> */}
-                        </FormControl>
-                      )}
-                    </Field>
+                    <Flex flexDirection="row" justifyContent="space-between" alignItems="top">
+                      <FormLabel mr={12} as='legend'>Do you have a ticket to the burn?</FormLabel>
+                      <label>
+                        <Flex flexDirection="row" alignItems="center">
+                          <Field type="radio" name="hasTicket" value="Yes" />
+                          <Flex ml={3}>Yes</Flex>
+                        </Flex>
+                      </label>
+                      <label>
+                        <Flex flexDirection="row" alignItems="center">
+                          <Field type="radio" name="hasTicket" value="No" />
+                          <Flex ml={3}>No</Flex>
+                        </Flex>
+                      </label>
+                    </Flex>
                     <Flex width="100%" justifyContent="end">
                       <Button
                         mt={12}
@@ -167,52 +158,6 @@ export default function Index() {
                 )}
               </Formik>
             </Flex>
-            {/* <Formik
-              initialValues={{ default_name: '' }}
-              onSubmit={(values, actions) => {
-                setTimeout(() => {
-                  alert(JSON.stringify(values, null, 2))
-                  actions.setSubmitting(false)
-                }, 1000)
-              }}>
-                {(props) => {
-                  <Form>
-                    <Field name="default_name">
-                      {({ field, form }) => {
-                        <FormControl id={field.name} isRequired>
-                          <FormLabel htmlFor={field.name}>Default World Name</FormLabel>
-                          <Input
-                            variant="filled"
-                            bgColor="gray.50"
-                            mb={6}
-                            {...field}
-                            id={field.name}
-                            placeholder='Legal name please' />
-                        </FormControl>
-                      }}
-                    </Field>
-                    <Flex width="100%" justifyContent="end">
-                      <Button colorScheme="green" isLoading={props.isSubmitting} type="submit">
-                        Register
-                      </Button>
-                    </Flex>
-                  </Form>
-                }}
-            </Formik> */}
-            {/* <FormControl id="email">
-              <FormLabel>Default World Name</FormLabel>
-              <Input
-                variant="filled"
-                bgColor="gray.50"
-                mb={6}
-                type="text"
-                name="name"
-                required={true}
-                placeholder="What's your legal name?"
-                onChange={handleInputOnChange}
-                disabled={isRegistering}
-                /> */}
-            {/* </FormControl> */}
           </>
         : <Spinner/>
       }

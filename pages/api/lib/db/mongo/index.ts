@@ -20,7 +20,9 @@ class MongoDB implements DB {
         return  {
           email: user["email"],
           name: user["name"],
-          firstYear: user["firstYear"]
+          playaName: user["playaName"],
+          hasTicket: user["hasTicket"],
+          phone: user["phone"]
         }
       }
     } catch (e) {
