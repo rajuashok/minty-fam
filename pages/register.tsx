@@ -46,9 +46,12 @@ export default function Index() {
                   playaName: user.playaName,
                   phone: user.phone,
                   hasTicket: user.hasTicket ? "Yes" : "No",
+                  arriveDate: user.arriveDate ? user.arriveDate : "2022-08-26",
+                  leaveDate: user.leaveDate ? user.leaveDate : "2022-09-05"
                 }}
                 onSubmit={async (values, actions) => {
                   await register(values);
+                  // alert(JSON.stringify(values, null, 4));
                   actions.setSubmitting(false);
                 }}
               >
