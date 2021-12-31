@@ -12,7 +12,6 @@ const users: UsersDB = {
   'deville75@gmail.com': {
     email: 'deville75@gmail.com',
     name: 'Ashok Raju',
-    firstYear: 2013
   }
 }
 
