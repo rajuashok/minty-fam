@@ -9,18 +9,18 @@ import { Field, Form, Formik } from 'formik';
 export default function Index() {
   const { user, setUser } = useContext(AuthContext);
 
-  const register = useCallback(async (values) => {
-    if (!values) {
+  const register = useCallback(async (newUser, oldUser) => {
+    if (!newUser) {
       console.log("Must provide values");
       return;
     }
     
     try {
-      const newUser = {
-        ...user,
-        ...values
+      const user = {
+        ...oldUser, // TODO: this is going to be null if this page loads first (user doesn't load in context above yet when this hook is defined)
+        ...newUser
       };
-      const res = await post('/api/user', newUser, true)
+      const res = await post('/api/user', user, true)
       if (res.status == 200) {
         const updatedUser = (await res.json()).user;
         setUser(updatedUser);
@@ -50,7 +50,7 @@ export default function Index() {
                   leaveDate: user.leaveDate ? user.leaveDate : "2022-09-05"
                 }}
                 onSubmit={async (values, actions) => {
-                  await register(values);
+                  await register(values, user);
                   // alert(JSON.stringify(values, null, 4));
                   actions.setSubmitting(false);
                 }}
