@@ -9,7 +9,6 @@ const users: UsersDB = {
   'deville75@gmail.com': {
     email: 'deville75@gmail.com',
     name: 'Ashok Raju',
-    firstYear: 2013
   }
 }
 
@@ -19,7 +18,7 @@ class DummyDatabase implements DB {
   }
 
   async readUser(email: string): Promise<UserType> {
-    return users[email] || {email, firstYear: 1, name: 'Bot'};
+    return users[email] || {email, name: 'Bot'};
   }
 
   async updateUser(email: string, user: UserType): Promise<UserType> {
