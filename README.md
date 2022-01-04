@@ -15,7 +15,7 @@ NOTE: This DB will get wiped and reset on every re-run of the app.
 ### Local MongoDB
 If you want your local data to actually persist and feel more like a production environment you should setup your local Mongo DB server.
 1. Install mongoDB (https://docs.mongodb.com/manual/installation). Then start mongo shell by running `mongosh` in your terminal.
-2. Create db `minty-fam` by running the following:
+2. Create db `minty-fam` by running the following in your `mongosh`:
 ```
 use minty-fam
 ```
