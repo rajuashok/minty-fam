@@ -53,6 +53,7 @@ class MongoDB implements DB {
       if (email != user.email) throw new Error(`Cannot change email of user. ${email} != ${user.email}`);
 
       let { db } = await connectToDatabase();
+      // TODO(ashok): Update the signup table as well.
 
       await db.collection('user')
         .updateOne(
